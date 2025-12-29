@@ -1,9 +1,9 @@
 # Provider
 provider "aws" {
-  region = "us-east-1"
+  region = var.region
 }
 
-# Data Source (Get latest Amazon Linux AMI)
+# Data Source
 data "aws_ami" "amazon_linux" {
   most_recent = true
   owners      = ["amazon"]
@@ -14,11 +14,11 @@ data "aws_ami" "amazon_linux" {
   }
 }
 
-# S3 Bucket (Secure)
+# S3 Bucket
 resource "aws_s3_bucket" "secure_bucket" {
-  bucket = "my-secure-terraform-bucket-arugnata"
+  bucket = var.bucket_name
+}
 
- }
 # Block public access
 resource "aws_s3_bucket_public_access_block" "block_public" {
   bucket = aws_s3_bucket.secure_bucket.id
@@ -32,7 +32,7 @@ resource "aws_s3_bucket_public_access_block" "block_public" {
 # EC2 Instance
 resource "aws_instance" "ec2_server" {
   ami           = data.aws_ami.amazon_linux.id
-  instance_type = "t2.micro"
+  instance_type = var.instance_type
 
   tags = {
     Name = "Terraform-EC2"
